@@ -19,6 +19,7 @@ module AssetSync
     attr_accessor :always_upload
     attr_accessor :ignored_files
     attr_accessor :prefix
+    attr_accessor :remote_paths
     attr_accessor :enabled
     attr_accessor :custom_headers
     attr_accessor :run_on_precompile
@@ -153,6 +154,10 @@ module AssetSync
     def assets_prefix
       # Fix for Issue #38 when Rails.config.assets.prefix starts with a slash
       self.prefix || ::Rails.application.config.assets.prefix.sub(/^\//, '')
+    end
+
+    def asset_paths
+      self.remote_paths || [assets_prefix]
     end
 
     def public_path

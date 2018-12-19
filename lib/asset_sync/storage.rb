@@ -20,6 +20,15 @@ module AssetSync
       @connection ||= Fog::Storage.new(self.config.fog_options)
     end
 
+    def buckets
+      return @_buckets if @_buckets
+      @_buckets = []
+      self.config.asset_paths.each do |prefix|
+        @_buckets << connection.directories.get(self.config.fog_directory, prefix: prefix)
+      end
+      @_buckets
+    end
+
     def bucket
       # fixes: https://github.com/rumblelabs/asset_sync/issues/18
       @bucket ||= connection.directories.get(self.config.fog_directory, :prefix => self.config.assets_prefix)
@@ -114,7 +123,9 @@ module AssetSync
       # fixes: https://github.com/rumblelabs/asset_sync/issues/16
       #        (work-around for https://github.com/fog/fog/issues/596)
       files = []
-      bucket.files.each { |f| files << f.key }
+      buckets.each do |bucket|
+        bucket.files.each { |f| files << f.key }
+      end
       return files
     end
 
