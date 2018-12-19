@@ -71,6 +71,10 @@ describe AssetSync do
       expect(AssetSync.config.log_silently).to be_truthy
     end
 
+    it "should default remote_paths to assets prefix" do
+      expect(AssetSync.config.remote_asset_paths).to eq([AssetSync.config.assets_prefix])
+    end
+
     it "log_silently? should reflect the configuration" do
       AssetSync.config.log_silently = false
       expect(AssetSync.config.log_silently?).to eq(false)
@@ -145,7 +149,7 @@ describe AssetSync do
 
     it "should default asset_regexps to match regexps" do
       expect(AssetSync.config.cache_asset_regexps).to eq(['cache_me.js', /cache_some\.\d{8}\.css/])
-    end    
+    end
   end
 
   describe 'from yml, exporting to a mobile hybrid development directory' do
@@ -255,12 +259,12 @@ describe AssetSync do
       expect(AssetSync.config.manifest_path).to match(/public\/custom_assets\/manifest.yml/)
     end
   end
-  
+
   describe 'with cache_asset_regexps' do
     before(:each) do
       AssetSync.config = AssetSync::Config.new
     end
-    
+
     it "config.cache_asset_regexp should set cache_asset_regexps" do
       AssetSync.config.cache_asset_regexp = /\.[a-f0-9]{8}/i
       expect(AssetSync.config.cache_asset_regexps.size).to eq(1)

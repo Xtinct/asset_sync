@@ -156,8 +156,8 @@ module AssetSync
       self.prefix || ::Rails.application.config.assets.prefix.sub(/^\//, '')
     end
 
-    def asset_paths
-      self.remote_paths || [assets_prefix]
+    def remote_asset_paths
+      self.remote_paths.presence || [assets_prefix]
     end
 
     def public_path
