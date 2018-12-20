@@ -27,6 +27,7 @@ module AssetSync
         @_buckets << connection.directories.get(self.config.fog_directory, prefix: prefix)
       end
       @_buckets.compact!
+      @_buckets
     end
 
     def bucket
