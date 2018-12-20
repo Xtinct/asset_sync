@@ -19,11 +19,11 @@ Upgraded from 1.x? Read `UPGRADING.md`
 
 ## Installation
 
-Since 2.x, Asset Sync depends on gem `fog-core` instead of `fog`.  
-This is due to `fog` is including many unused storage provider gems as its dependencies.  
+Since 2.x, Asset Sync depends on gem `fog-core` instead of `fog`.
+This is due to `fog` is including many unused storage provider gems as its dependencies.
 
-Asset Sync has no idea about what provider will be used,  
-so you are responsible for bundling the right gem for the provider to be used.  
+Asset Sync has no idea about what provider will be used,
+so you are responsible for bundling the right gem for the provider to be used.
 
 In your Gemfile:
 ```ruby
@@ -348,8 +348,8 @@ end
 The blocks are run when local files are being scanned and uploaded
 
 ##### Config Method `file_ext_to_mime_type_overrides`
-It's reported that `mime-types` 3.x returns `application/ecmascript` instead of `application/javascript`  
-Such change of mime type might cause some CDN to disable asset compression  
+It's reported that `mime-types` 3.x returns `application/ecmascript` instead of `application/javascript`
+Such change of mime type might cause some CDN to disable asset compression
 So this gem has defined a default override for file ext `js` to be mapped to `application/javascript` by default
 
 To customize the overrides:
@@ -357,7 +357,7 @@ To customize the overrides:
 AssetSync.configure do |config|
   # Clear the default overrides
   config.file_ext_to_mime_type_overrides.clear
-  
+
   # Add/Edit overrides
   # Will call `#to_s` for inputs
   config.file_ext_to_mime_type_overrides.add(:js, :"application/x-javascript")
@@ -572,8 +572,11 @@ if defined?(AssetSync)
 end
 ```
 
-### Caveat
-By adding local files outside the normal Rails `assets` directory, the uploading part works, however checking that the asset was previously uploaded is not working because asset_sync is only fetching the files in the `assets` directory on the remote bucket. This will mean additional time used to upload the same assets again on every precompilation.
+3. Add `remote_paths` option that would allow to check if webpack assets were previously uploaded, to you `asset_sync.rb` initializer:
+```ruby
+# Allows asset sync to check files in multiple directories
+config.remote_paths = [config.assets_prefix,  Webpacker.config.public_output_path.relative_path_from(Rails.root.join('public')).to_s]
+```
 
 ## Running the specs
 
