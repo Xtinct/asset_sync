@@ -26,7 +26,7 @@ module AssetSync
       self.config.remote_asset_paths.each do |prefix|
         @_buckets << connection.directories.get(self.config.fog_directory, prefix: prefix)
       end
-      @_buckets
+      @_buckets.compact!
     end
 
     def bucket
@@ -119,7 +119,7 @@ module AssetSync
     end
 
     def get_remote_files
-      raise BucketNotFound.new("#{self.config.fog_provider} Bucket: #{self.config.fog_directory} not found.") unless bucket
+      raise BucketNotFound.new("#{self.config.fog_provider} Bucket: #{self.config.fog_directory} not found.") unless buckets.present?
       # fixes: https://github.com/rumblelabs/asset_sync/issues/16
       #        (work-around for https://github.com/fog/fog/issues/596)
       files = []
@@ -145,8 +145,10 @@ module AssetSync
 
       log "Flagging #{from_remote_files_to_delete.size} file(s) for deletion"
       # Delete unneeded remote files
-      bucket.files.each do |f|
-        delete_file(f, from_remote_files_to_delete)
+      buckets.each do |bucket|
+        bucket.files.each do |f|
+          delete_file(f, from_remote_files_to_delete)
+        end
       end
     end
 
